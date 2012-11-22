@@ -82,6 +82,30 @@ describe PlayingCards::Card do
     end
   end
 
+  context "names" do
+    it "should return the rank name" do
+      (2..10).each do |rank|
+        PlayingCards::Card.new(rank.to_s, 'heart').rank_name.should == rank.to_s
+      end
+      PlayingCards::Card.new('J', 'heart').rank_name.should == 'Jack'
+      PlayingCards::Card.new('Q', 'heart').rank_name.should == 'Queen'
+      PlayingCards::Card.new('K', 'heart').rank_name.should == 'King'
+      PlayingCards::Card.new('A', 'heart').rank_name.should == 'Ace'
+    end
+
+    it "should give a name for the card with rank name and suit" do
+      {'heart' => 'Hearts', 'club' => 'Clubs', 'spade' => 'Spades', 'diamond' => 'Diamonds'}.each do |suit, suit_name|
+        (2..10).each do |rank|
+          PlayingCards::Card.new(rank, suit).name.should == "#{rank} of #{suit_name}"
+        end
+        PlayingCards::Card.new('J', suit).name.should == "Jack of #{suit_name}"
+        PlayingCards::Card.new('Q', suit).name.should == "Queen of #{suit_name}"
+        PlayingCards::Card.new('K', suit).name.should == "King of #{suit_name}"
+        PlayingCards::Card.new('A', suit).name.should == "Ace of #{suit_name}"
+      end
+    end
+  end
+
   context "combinations" do
     it "should create an array of arrays of rank and suit combinations" do
       PlayingCards::Card.card_combinations.should == [

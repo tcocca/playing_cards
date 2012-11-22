@@ -6,6 +6,7 @@ module PlayingCards
     SUITS = %w(spade heart club diamond)
     COLORS = {'spade' => :black, 'club' => :black, 'heart' => :red, 'diamond' => :red}
     VALUES = {'A' => 1, 'J' => 11, 'Q' => 12, 'K' => 13}
+    NAMES = {'A' => 'Ace', 'J' => 'Jack', 'Q' => 'Queen', 'K' => 'King'}
 
     attr_reader :rank, :suit
 
@@ -33,6 +34,14 @@ module PlayingCards
 
     def value
       VALUES[self.rank] || self.rank.to_i
+    end
+
+    def name
+      "#{rank_name} of #{self.suit.capitalize}s"
+    end
+
+    def rank_name
+      NAMES[self.rank] || self.rank
     end
 
     def self.card_combinations
