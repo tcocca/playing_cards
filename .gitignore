@@ -15,3 +15,21 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
+
+## MAC OS
+.DS_Store
+
+## TEXTMATE
+*.tmproj
+tmtags
+
+## EMACS
+*~
+\#*
+.\#*
+
+## VIM
+*.swp
+
+## PROJECT::SPECIFIC
+.rvmrc
