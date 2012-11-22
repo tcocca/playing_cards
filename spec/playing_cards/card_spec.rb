@@ -42,6 +42,44 @@ describe PlayingCards::Card do
       PlayingCards::Card.new('2', 'heart').black?.should_not be_true
       PlayingCards::Card.new('2', 'diamond').black?.should_not be_true
     end
+
+    it "should return the color" do
+      PlayingCards::Card.new('2', 'heart').color.should == "red"
+      PlayingCards::Card.new('2', 'diamond').color.should == "red"
+      PlayingCards::Card.new('2', 'spade').color.should == "black"
+      PlayingCards::Card.new('2', 'club').color.should == "black"
+    end
+
+    it "should give the color as a string" do
+      PlayingCards::Card.new('2', 'heart').color.should be_a(String)
+      PlayingCards::Card.new('2', 'diamond').color.should be_a(String)
+      PlayingCards::Card.new('2', 'spade').color.should be_a(String)
+      PlayingCards::Card.new('2', 'club').color.should be_a(String)
+    end
+  end
+
+  context "value" do
+    it "should return 1 for aces" do
+      PlayingCards::Card.new('A', 'heart').value.should == 1
+    end
+
+    it "should return 11 for jacks" do
+      PlayingCards::Card.new('J', 'heart').value.should == 11
+    end
+
+    it "should return 12 for queens" do
+      PlayingCards::Card.new('Q', 'heart').value.should == 12
+    end
+
+    it "should return 13 for kings" do
+      PlayingCards::Card.new('K', 'heart').value.should == 13
+    end
+
+    it "should return the rank as an integer for number cards" do
+      (2..10).each do |rank|
+        PlayingCards::Card.new(rank.to_s, 'heart').value.should == rank
+      end
+    end
   end
 
   context "combinations" do
