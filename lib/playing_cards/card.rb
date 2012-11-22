@@ -32,7 +32,7 @@ module PlayingCards
     end
 
     def value
-      VALUES.fetch(self.rank, self.rank.to_i)
+      VALUES[self.rank] || self.rank.to_i
     end
 
     def self.card_combinations
