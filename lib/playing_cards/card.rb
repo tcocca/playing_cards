@@ -1,5 +1,7 @@
 module PlayingCards
   class Card
+    include Comparable
+
     class InvalidCardError < StandardError; end
 
     RANKS = %w(2 3 4 5 6 7 8 9 10 J Q K A)
@@ -45,6 +47,10 @@ module PlayingCards
       "#{rank_name} of #{self.suit.capitalize}s"
     end
     alias to_s name
+
+    def <=>(other_card)
+      self.value <=> other_card.value
+    end
 
     def self.card_combinations
       RANKS.product(SUITS)

@@ -132,6 +132,72 @@ describe PlayingCards::Card do
     end
   end
 
+  context "comparable" do
+    let(:compare_cards) do
+      compare_cards = {}
+      ['heart', 'club'].each do |suit|
+        compare_cards[suit] = {}
+        (2..10).each do |rank|
+          compare_cards[suit][rank] = PlayingCards::Card.new(rank, suit)
+        end
+        compare_cards[suit]['J'] = PlayingCards::Card.new('J', suit)
+        compare_cards[suit]['Q'] = PlayingCards::Card.new('Q', suit)
+        compare_cards[suit]['K'] = PlayingCards::Card.new('K', suit)
+        compare_cards[suit]['A'] = PlayingCards::Card.new('A', suit)
+      end
+      compare_cards
+    end
+
+    it "should return true or false for the equals comparison" do
+      (compare_cards['heart']['A'] == compare_cards['club']['A']).should == true
+      (compare_cards['heart']['K'] == compare_cards['club']['K']).should == true
+      (compare_cards['heart'][2] == compare_cards['club'][2]).should == true
+      (compare_cards['heart']['A'] == compare_cards['club']['K']).should == false
+      (compare_cards['heart']['K'] == compare_cards['club']['A']).should == false
+      (compare_cards['heart'][2] == compare_cards['club'][3]).should == false
+    end
+
+    it "should return true or false for the > comparison" do
+      (compare_cards['heart']['A'] > compare_cards['club']['A']).should == false
+      (compare_cards['heart']['K'] > compare_cards['club']['K']).should == false
+      (compare_cards['heart'][2] > compare_cards['club'][2]).should == false
+      (compare_cards['heart']['A'] > compare_cards['club']['K']).should == true
+      (compare_cards['heart']['K'] > compare_cards['club']['A']).should == false
+      (compare_cards['heart'][2] > compare_cards['club'][3]).should == false
+      (compare_cards['heart'][3] > compare_cards['club'][2]).should == true
+    end
+
+    it "should return true or false for the >= comparison" do
+      (compare_cards['heart']['A'] >= compare_cards['club']['A']).should == true
+      (compare_cards['heart']['K'] >= compare_cards['club']['K']).should == true
+      (compare_cards['heart'][2] >= compare_cards['club'][2]).should == true
+      (compare_cards['heart']['A'] >= compare_cards['club']['K']).should == true
+      (compare_cards['heart']['K'] >= compare_cards['club']['A']).should == false
+      (compare_cards['heart'][2] >= compare_cards['club'][3]).should == false
+      (compare_cards['heart'][3] >= compare_cards['club'][2]).should == true
+    end
+
+    it "should return true or false for the < comparison" do
+      (compare_cards['heart']['A'] < compare_cards['club']['A']).should == false
+      (compare_cards['heart']['K'] < compare_cards['club']['K']).should == false
+      (compare_cards['heart'][2] < compare_cards['club'][2]).should == false
+      (compare_cards['heart']['A'] < compare_cards['club']['K']).should == false
+      (compare_cards['heart']['K'] < compare_cards['club']['A']).should == true
+      (compare_cards['heart'][2] < compare_cards['club'][3]).should == true
+      (compare_cards['heart'][3] < compare_cards['club'][2]).should == false
+    end
+
+    it "should return true or false for the <= comparison" do
+      (compare_cards['heart']['A'] <= compare_cards['club']['A']).should == true
+      (compare_cards['heart']['K'] <= compare_cards['club']['K']).should == true
+      (compare_cards['heart'][2] <= compare_cards['club'][2]).should == true
+      (compare_cards['heart']['A'] <= compare_cards['club']['K']).should == false
+      (compare_cards['heart']['K'] <= compare_cards['club']['A']).should == true
+      (compare_cards['heart'][2] <= compare_cards['club'][3]).should == true
+      (compare_cards['heart'][3] <= compare_cards['club'][2]).should == false
+    end
+  end
+
   context "combinations" do
     it "should create an array of arrays of rank and suit combinations" do
       PlayingCards::Card.card_combinations.should == [
