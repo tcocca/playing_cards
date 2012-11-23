@@ -59,8 +59,10 @@ describe PlayingCards::Card do
   end
 
   context "value" do
-    it "should return 1 for aces" do
-      PlayingCards::Card.new('A', 'heart').value.should == 1
+    it "should return the rank as an integer for number cards" do
+      (2..10).each do |rank|
+        PlayingCards::Card.new(rank.to_s, 'heart').value.should == rank
+      end
     end
 
     it "should return 11 for jacks" do
@@ -75,10 +77,20 @@ describe PlayingCards::Card do
       PlayingCards::Card.new('K', 'heart').value.should == 13
     end
 
-    it "should return the rank as an integer for number cards" do
+    it "should return 14 for aces" do
+      PlayingCards::Card.new('A', 'heart').value.should == 14
+    end
+  end
+
+  context "to_i" do
+    it "should return the value of the rank" do
       (2..10).each do |rank|
         PlayingCards::Card.new(rank.to_s, 'heart').value.should == rank
       end
+      PlayingCards::Card.new('J', 'heart').value.should == 11
+      PlayingCards::Card.new('Q', 'heart').value.should == 12
+      PlayingCards::Card.new('K', 'heart').value.should == 13
+      PlayingCards::Card.new('A', 'heart').value.should == 14
     end
   end
 
@@ -94,6 +106,20 @@ describe PlayingCards::Card do
     end
 
     it "should give a name for the card with rank name and suit" do
+      {'heart' => 'Hearts', 'club' => 'Clubs', 'spade' => 'Spades', 'diamond' => 'Diamonds'}.each do |suit, suit_name|
+        (2..10).each do |rank|
+          PlayingCards::Card.new(rank, suit).name.should == "#{rank} of #{suit_name}"
+        end
+        PlayingCards::Card.new('J', suit).name.should == "Jack of #{suit_name}"
+        PlayingCards::Card.new('Q', suit).name.should == "Queen of #{suit_name}"
+        PlayingCards::Card.new('K', suit).name.should == "King of #{suit_name}"
+        PlayingCards::Card.new('A', suit).name.should == "Ace of #{suit_name}"
+      end
+    end
+  end
+
+  context "to_s" do
+    it "should return the name of the card" do
       {'heart' => 'Hearts', 'club' => 'Clubs', 'spade' => 'Spades', 'diamond' => 'Diamonds'}.each do |suit, suit_name|
         (2..10).each do |rank|
           PlayingCards::Card.new(rank, suit).name.should == "#{rank} of #{suit_name}"
