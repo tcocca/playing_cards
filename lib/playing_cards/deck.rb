@@ -2,13 +2,14 @@ module PlayingCards
   class Deck
     class NotEnoughCardsError < StandardError; end
 
-    attr_reader :cards, :discards, :drawn_cards
+    attr_reader :cards, :discards, :drawn_cards, :options
 
     def initialize(options = {})
+      @options = options
       @cards = []
       @discards = []
       @drawn = []
-      num_decks = options.delete(:num_decks) || 1
+      num_decks = @options.fetch(:num_decks, 1)
       (Card.card_combinations * num_decks).each do |card_combination|
         @cards << Card.new(card_combination[0], card_combination[1])
       end
