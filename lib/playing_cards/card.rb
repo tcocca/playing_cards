@@ -48,8 +48,12 @@ module PlayingCards
     end
     alias to_s name
 
-    def <=>(other_card)
-      self.value <=> other_card.value
+    def <=>(another_card)
+      self.value <=> another_card.value
+    end
+
+    def ==(another_card)
+      self.suit == another_card.suit && self.rank == another_card.rank
     end
 
     def self.card_combinations

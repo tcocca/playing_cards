@@ -149,12 +149,14 @@ describe PlayingCards::Card do
     end
 
     it "should return true or false for the equals comparison" do
-      (compare_cards['heart']['A'] == compare_cards['club']['A']).should == true
-      (compare_cards['heart']['K'] == compare_cards['club']['K']).should == true
-      (compare_cards['heart'][2] == compare_cards['club'][2]).should == true
+      (compare_cards['heart']['A'] == compare_cards['club']['A']).should == false
+      (compare_cards['heart']['K'] == compare_cards['club']['K']).should == false
+      (compare_cards['heart'][2] == compare_cards['club'][2]).should == false
       (compare_cards['heart']['A'] == compare_cards['club']['K']).should == false
       (compare_cards['heart']['K'] == compare_cards['club']['A']).should == false
       (compare_cards['heart'][2] == compare_cards['club'][3]).should == false
+      (compare_cards['heart']['A'] == compare_cards['heart']['A']).should == true
+      (PlayingCards::Card.new(2, 'heart') == PlayingCards::Card.new(2, 'heart')).should == true
     end
 
     it "should return true or false for the > comparison" do
