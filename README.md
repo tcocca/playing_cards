@@ -1,6 +1,7 @@
 # PlayingCards
 
-TODO: Write a gem description
+A ruby library for working with playing cards.  
+This is meant to be a generic library that will provide the base functionality to build games on top of.
 
 ## Installation
 
