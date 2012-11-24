@@ -1,0 +1,163 @@
+require 'spec_helper'
+
+describe PlayingCards::Deck do
+  let(:deck) {PlayingCards::Deck.new}
+
+  context "new deck" do
+    it "should create an array of cards" do
+      deck.cards.should be_a(Array)
+      deck.cards.first.should be_a(PlayingCards::Card)
+    end
+
+    it "should accept a number of decks option" do
+      deck.cards.size.should == 52
+      PlayingCards::Deck.new(:num_decks => 1).cards.size.should == 52
+      PlayingCards::Deck.new(:num_decks => 2).cards.size.should == 104
+      PlayingCards::Deck.new(:num_decks => 3).cards.size.should == 156
+    end
+  end
+
+  context "cards_remaining" do
+    it "should return the number of cards left in the deck" do
+      deck.cards_remaining.should == 52
+      deck.cards.pop
+      deck.cards_remaining.should == 51
+      two_decks = PlayingCards::Deck.new(:num_decks => 2)
+      two_decks.cards_remaining.should == 104
+      two_decks.cards.pop
+      two_decks.cards_remaining.should == 103
+    end
+  end
+
+  context "shuffle!" do
+    it "should shuffle the array of cards" do
+      #deck.cards.should_receive(:shuffle!)
+      cards_stub = double("cards")
+      deck.stub(:cards).and_return(cards_stub)
+      cards_stub.should_receive(:shuffle!)
+      deck.shuffle!
+    end
+  end
+
+  context "split" do
+    it "should return 2 arrays that have the same cards as the deck" do
+      top, bottom = deck.split
+      top.should be_a(Array)
+      bottom.should be_a(Array)
+      (top.size + bottom.size).should == deck.cards.size
+      (top + bottom).sort{|a,b| a.suit <=> b.suit}.sort{|a,b| a <=> b}.should == deck.cards.sort{|a,b| a.suit <=> b.suit}.sort{|a,b| a <=> b}
+    end
+  end
+
+  context "cut" do
+    it "should reorder the split cards so that the bottom half is now the top half" do
+      old_cards = deck.cards.dup
+      deck.cut.should be_a(Array)
+      deck.cards.size.should == old_cards.size
+    end
+  end
+
+  context "draw" do
+    it "should default to giving 1 card off the top of the pile" do
+      count = deck.cards_remaining
+      old_cards = deck.cards.dup
+      cards = deck.draw
+      cards.should be_a(Array)
+      cards.size.should == 1
+      cards.first.should == old_cards.first
+      deck.cards.size.should == (old_cards.size - 1)
+    end
+
+    it "should accept a number of cards to draw" do
+      count = deck.cards_remaining
+      old_cards = deck.cards.dup
+      cards = deck.draw(2)
+      cards.should be_a(Array)
+      cards.size.should == 2
+      cards.should == old_cards[0..1]
+      deck.cards.size.should == (old_cards.size - 2)
+    end
+
+    it "should raise an error when there are not enough cards" do
+      expect { deck.draw(53) }.to raise_error PlayingCards::Deck::NotEnoughCardsError
+    end
+
+    it "should not raise an error when there are enough cards" do
+      expect { deck.draw(52) }.to_not raise_error
+    end
+  end
+
+  context "discard" do
+    it "should add the card to the discards pile" do
+      card = deck.draw.first
+      deck.discards.size.should == 0
+      deck.discard(card)
+      deck.discards.size.should == 1
+      deck.discards.should == [card]
+      second_card = deck.draw.first
+      deck.discard(second_card)
+      deck.discards.size.should == 2
+      deck.discards.should == [card, second_card]
+    end
+  end
+
+  context "reuse_discards" do
+    it "should not do anything if there are still cards in the pile" do
+      cards = deck.cards.dup
+      discards = deck.discards.dup
+      deck.reuse_discards
+      deck.cards.should == cards
+      deck.discards.should == discards
+    end
+
+    it "should move the discards back to the cards pile and shuffle by default" do
+      cards = deck.draw(52)
+      cards.each do |card|
+        deck.discard(card)
+      end
+      deck.cards.size.should == 0
+      deck.discards.size.should == 52
+      deck.should_receive(:shuffle!).and_call_original
+      deck.reuse_discards
+      deck.cards.size.should == 52
+      deck.discards.size.should == 0
+    end
+
+    it "should move the discards back to the cards pile and not shuffle when given false" do
+      cards = deck.draw(52)
+      cards.each do |card|
+        deck.discard(card)
+      end
+      deck.cards.size.should == 0
+      deck.discards.size.should == 52
+      deck.should_not_receive(:shuffle!)
+      deck.reuse_discards(false)
+      deck.cards.size.should == 52
+      deck.discards.size.should == 0
+      deck.cards.should == cards
+    end
+
+    it "should only move the discarded cards back to the cards" do
+      deck.shuffle!
+      cards = deck.draw(52)
+      cards.each_with_index do |card, i|
+        next if i < 10
+        deck.discard(card)
+      end
+      deck.cards.size.should == 0
+      deck.discards.size.should == 42
+      deck.reuse_discards
+      deck.cards.size.should == 42
+      deck.discards.size.should == 0
+      cards.each_with_index do |card, i|
+        found_card = deck.cards.find{|c| c.suit == card.suit && c.rank == card.rank}
+        if i < 10
+          found_card.should be_nil
+        else
+          found_card.should_not be_nil
+        end
+      end
+    end
+  end
+
+end
