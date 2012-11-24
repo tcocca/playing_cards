@@ -9,10 +9,13 @@ module PlayingCards
       @cards = []
       @discards = []
       @drawn = []
-      num_decks = @options.fetch(:num_decks, 1)
-      (Card.card_combinations * num_decks).each do |card_combination|
+      (Card.card_combinations * number_of_decks).each do |card_combination|
         @cards << Card.new(card_combination[0], card_combination[1])
       end
+    end
+
+    def number_of_decks
+      @options.fetch(:num_decks, 1)
     end
 
     def cards_remaining
