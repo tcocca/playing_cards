@@ -82,21 +82,24 @@ module PlayingCards
       restore_cards = options.delete(:cards) || []
       restore_discards = options.delete(:discards) || []
       restore_drawn_cards = options.delete(:drawn_cards) || []
-      raise InvalidDeckStateError unless restored_deck_valid?(restore_cards, restore_discards, restore_drawn_cards)
-      unless restore_cards.empty?
-        restore_cards.each do |card_combination|
-          @cards << Card.new(card_combination[0], card_combination[1])
+      if restored_deck_valid?(restore_cards, restore_discards, restore_drawn_cards)
+        unless restore_cards.empty?
+          restore_cards.each do |card_combination|
+            @cards << Card.new(card_combination[0], card_combination[1])
+          end
         end
-      end
-      unless restore_discards.empty?
-        restore_discards.each do |card_combination|
-          @discards << Card.new(card_combination[0], card_combination[1])
+        unless restore_discards.empty?
+          restore_discards.each do |card_combination|
+            @discards << Card.new(card_combination[0], card_combination[1])
+          end
         end
-      end
-      unless restore_drawn_cards.empty?
-        restore_drawn_cards.each do |card_combination|
-          @drawn_cards << Card.new(card_combination[0], card_combination[1])
+        unless restore_drawn_cards.empty?
+          restore_drawn_cards.each do |card_combination|
+            @drawn_cards << Card.new(card_combination[0], card_combination[1])
+          end
         end
+      else
+        raise InvalidDeckStateError
       end
     end
 
