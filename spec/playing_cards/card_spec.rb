@@ -3,6 +3,7 @@ require 'spec_helper'
 describe PlayingCards::Card do
   context "new card" do
     let(:card) { PlayingCards::Card.new('2', 'heart') }
+
     it "should be valid?" do
       card.valid?.should == true
     end
@@ -12,11 +13,13 @@ describe PlayingCards::Card do
     it "should allow initialization with a rank and suit" do
       expect { PlayingCards::Card.new(2, 'diamond') }.to_not raise_error
     end
+
     it "should not allow initialization if given incorrect rank or suit" do
       expect { PlayingCards::Card.new(0, 'diamond') }.to raise_error PlayingCards::Card::InvalidCardError
       expect { PlayingCards::Card.new(0, 'none') }.to raise_error PlayingCards::Card::InvalidCardError
       expect { PlayingCards::Card.new(2, 'none') }.to raise_error PlayingCards::Card::InvalidCardError
     end
+
     it "should allow passing 1 as the rank for an ace" do
       expect { PlayingCards::Card.new(1, 'diamond') }.to_not raise_error
     end
@@ -197,6 +200,18 @@ describe PlayingCards::Card do
       (compare_cards['heart']['K'] <= compare_cards['club']['A']).should == true
       (compare_cards['heart'][2] <= compare_cards['club'][3]).should == true
       (compare_cards['heart'][3] <= compare_cards['club'][2]).should == false
+    end
+  end
+
+  context "state" do
+    let(:card) { PlayingCards::Card.new('2', 'heart') }
+
+    it "should return an array" do
+      card.state.should be_a(Array)
+    end
+
+    it "should return an array of rank and suit" do
+      card.state.should == ["2", "heart"]
     end
   end
 

@@ -69,6 +69,13 @@ module PlayingCards
       end
     end
 
+    def dump_state
+      cards_state = cards.collect{|c| c.state}
+      discards_state = discards.collect{|c| c.state}
+      drawn_cards_state = drawn_cards.collect{|c| c.state}
+      [cards_state, discards_state, drawn_cards_state]
+    end
+
     private
 
     def restore_deck_from_options

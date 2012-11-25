@@ -56,6 +56,10 @@ module PlayingCards
       self.suit == another_card.suit && self.rank == another_card.rank
     end
 
+    def state
+      [self.rank, self.suit]
+    end
+
     def self.card_combinations
       RANKS.product(SUITS)
     end

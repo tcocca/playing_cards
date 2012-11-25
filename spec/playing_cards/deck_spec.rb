@@ -329,4 +329,29 @@ describe PlayingCards::Deck do
     end
   end
 
+  context "dump_state" do
+    it "should return the state of the deck" do
+      dumped_cards, dumped_discards, dumped_drawn_cards = deck.dump_state
+      dumped_cards.should be_a(Array)
+      dumped_cards.size.should == 52
+      dumped_discards.should be_a(Array)
+      dumped_discards.size.should == 0
+      dumped_drawn_cards.should be_a(Array)
+      dumped_drawn_cards.size.should == 0
+    end
+
+    it "should return the state after actions are performed" do
+      cards = deck.draw(10)
+      deck.discard(cards.first)
+      deck.discard(cards.last)
+      dumped_cards, dumped_discards, dumped_drawn_cards = deck.dump_state
+      dumped_cards.size.should == 42
+      dumped_cards.should == deck.cards.collect{|c| [c.rank, c.suit]}
+      dumped_discards.size.should == 2
+      dumped_discards.should == [[cards.first.rank, cards.first.suit], [cards.last.rank, cards.last.suit]]
+      dumped_drawn_cards.size.should == 8
+      dumped_drawn_cards.should == cards.slice(1..8).collect{|c| [c.rank, c.suit]}
+    end
+  end
+
 end
