@@ -15,6 +15,121 @@ describe PlayingCards::Deck do
       PlayingCards::Deck.new(:num_decks => 2).cards.size.should == 104
       PlayingCards::Deck.new(:num_decks => 3).cards.size.should == 156
     end
+
+    it "should allow creating a deck from a restored state" do
+      restore_deck = PlayingCards::Deck.new(
+        :cards => [["2", "heart"],["2", "club"], ["2", "diamond"]],
+        :discards => [
+          ["3", "spade"], ["3", "heart"], ["3", "club"], ["3", "diamond"],
+          ["4", "spade"], ["4", "heart"], ["4", "club"], ["4", "diamond"],
+          ["5", "spade"], ["5", "heart"], ["5", "club"], ["5", "diamond"],
+          ["6", "spade"], ["6", "heart"], ["6", "club"], ["6", "diamond"],
+          ["7", "spade"], ["7", "heart"], ["7", "club"], ["7", "diamond"],
+          ["8", "spade"], ["8", "heart"], ["8", "club"], ["8", "diamond"],
+          ["9", "spade"], ["9", "heart"], ["9", "club"], ["9", "diamond"],
+          ["10", "spade"], ["10", "heart"], ["10", "club"], ["10", "diamond"],
+          ["J", "spade"], ["J", "heart"], ["J", "club"], ["J", "diamond"],
+          ["Q", "spade"], ["Q", "heart"], ["Q", "club"], ["Q", "diamond"],
+          ["K", "spade"], ["K", "heart"], ["K", "club"], ["K", "diamond"],
+          ["A", "spade"], ["A", "heart"], ["A", "club"], ["A", "diamond"]
+        ],
+        :drawn_cards => [["2", "spade"]]
+      )
+      restore_deck.cards.size.should == 3
+      restore_deck.discards.size.should == 48
+      restore_deck.drawn_cards.size.should == 1
+    end
+
+    it "should raise an error when given an invalid state" do
+      expect {
+        PlayingCards::Deck.new(
+          :cards => [['2', 'heart'],["2", "club"], ["2", "diamond"]]
+        )
+      }.to raise_error PlayingCards::Deck::InvalidDeckStateError
+      expect {
+        PlayingCards::Deck.new(
+          :cards => [['2', 'heart'],["2", "club"], ["2", "diamond"]],
+          :discards => [
+            ["3", "spade"], ["3", "heart"], ["3", "club"], ["3", "diamond"],
+            ["4", "spade"], ["4", "heart"], ["4", "club"], ["4", "diamond"],
+            ["5", "spade"], ["5", "heart"], ["5", "club"], ["5", "diamond"],
+            ["6", "spade"], ["6", "heart"], ["6", "club"], ["6", "diamond"],
+            ["7", "spade"], ["7", "heart"], ["7", "club"], ["7", "diamond"],
+            ["8", "spade"], ["8", "heart"], ["8", "club"], ["8", "diamond"],
+            ["9", "spade"], ["9", "heart"], ["9", "club"], ["9", "diamond"],
+            ["10", "spade"], ["10", "heart"], ["10", "club"], ["10", "diamond"],
+            ["J", "spade"], ["J", "heart"], ["J", "club"], ["J", "diamond"],
+            ["Q", "spade"], ["Q", "heart"], ["Q", "club"], ["Q", "diamond"],
+            ["K", "spade"], ["K", "heart"], ["K", "club"], ["K", "diamond"],
+            ["A", "spade"], ["A", "heart"], ["A", "club"], ["A", "diamond"]
+          ],
+          :drawn_cards => [["2", 'spade'],["2", 'spade']]
+        )
+      }.to raise_error PlayingCards::Deck::InvalidDeckStateError
+    end
+
+    it "should take allow restoring with a number of decks" do
+      restore_deck = PlayingCards::Deck.new(
+        :cards => [
+          ["2", "spade"],["2", "heart"],["2", "club"], ["2", "diamond"],
+          ["3", "spade"], ["3", "heart"], ["3", "club"], ["3", "diamond"],
+          ["4", "spade"], ["4", "heart"], ["4", "club"], ["4", "diamond"],
+          ["5", "spade"], ["5", "heart"], ["5", "club"], ["5", "diamond"],
+          ["6", "spade"], ["6", "heart"], ["6", "club"], ["6", "diamond"],
+          ["7", "spade"], ["7", "heart"], ["7", "club"], ["7", "diamond"],
+          ["8", "spade"], ["8", "heart"], ["8", "club"], ["8", "diamond"],
+          ["9", "spade"], ["9", "heart"], ["9", "club"], ["9", "diamond"],
+          ["10", "spade"], ["10", "heart"], ["10", "club"], ["10", "diamond"],
+          ["J", "spade"], ["J", "heart"], ["J", "club"], ["J", "diamond"],
+          ["Q", "spade"], ["Q", "heart"], ["Q", "club"], ["Q", "diamond"],
+          ["K", "spade"], ["K", "heart"], ["K", "club"], ["K", "diamond"],
+          ["A", "spade"], ["A", "heart"], ["A", "club"], ["A", "diamond"]
+        ],
+        :drawn_cards => [
+          ["2", "spade"],["2", "heart"],["2", "club"], ["2", "diamond"],
+          ["3", "spade"], ["3", "heart"], ["3", "club"], ["3", "diamond"],
+          ["4", "spade"], ["4", "heart"], ["4", "club"], ["4", "diamond"],
+          ["5", "spade"], ["5", "heart"], ["5", "club"], ["5", "diamond"],
+          ["6", "spade"], ["6", "heart"], ["6", "club"], ["6", "diamond"],
+          ["7", "spade"], ["7", "heart"], ["7", "club"], ["7", "diamond"],
+          ["8", "spade"], ["8", "heart"], ["8", "club"], ["8", "diamond"],
+          ["9", "spade"], ["9", "heart"], ["9", "club"], ["9", "diamond"],
+          ["10", "spade"], ["10", "heart"], ["10", "club"], ["10", "diamond"],
+          ["J", "spade"], ["J", "heart"], ["J", "club"], ["J", "diamond"],
+          ["Q", "spade"], ["Q", "heart"], ["Q", "club"], ["Q", "diamond"],
+          ["K", "spade"], ["K", "heart"], ["K", "club"], ["K", "diamond"],
+          ["A", "spade"], ["A", "heart"], ["A", "club"], ["A", "diamond"]
+        ],
+        :num_decks => 2
+      )
+      restore_deck.cards.size.should == 52
+      restore_deck.discards.size.should == 0
+      restore_deck.drawn_cards.size.should == 52
+    end
+
+    it "should raise error when given a valid deck but less than the number specified" do
+      expect {
+        PlayingCards::Deck.new(
+          :cards => [
+            ["2", "spade"],["2", "heart"],["2", "club"], ["2", "diamond"],
+            ["3", "spade"], ["3", "heart"], ["3", "club"], ["3", "diamond"],
+            ["4", "spade"], ["4", "heart"], ["4", "club"], ["4", "diamond"],
+            ["5", "spade"], ["5", "heart"], ["5", "club"], ["5", "diamond"],
+            ["6", "spade"], ["6", "heart"], ["6", "club"], ["6", "diamond"],
+            ["7", "spade"], ["7", "heart"], ["7", "club"], ["7", "diamond"],
+            ["8", "spade"], ["8", "heart"], ["8", "club"], ["8", "diamond"],
+            ["9", "spade"], ["9", "heart"], ["9", "club"], ["9", "diamond"],
+            ["10", "spade"], ["10", "heart"], ["10", "club"], ["10", "diamond"],
+            ["J", "spade"], ["J", "heart"], ["J", "club"], ["J", "diamond"],
+            ["Q", "spade"], ["Q", "heart"], ["Q", "club"], ["Q", "diamond"],
+            ["K", "spade"], ["K", "heart"], ["K", "club"], ["K", "diamond"],
+            ["A", "spade"], ["A", "heart"], ["A", "club"], ["A", "diamond"]
+          ],
+          :num_decks => 2
+        )
+      }.to raise_error PlayingCards::Deck::InvalidDeckStateError
+    end
+
   end
 
   context "number_of_decks" do

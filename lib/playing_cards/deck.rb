@@ -2,6 +2,7 @@ module PlayingCards
   class Deck
     class NotEnoughCardsError < StandardError; end
     class NotDrawnCardError < StandardError; end
+    class InvalidDeckStateError < StandardError; end
 
     attr_reader :cards, :discards, :drawn_cards, :options
 
@@ -10,8 +11,12 @@ module PlayingCards
       @cards = []
       @discards = []
       @drawn_cards = []
-      (Card.card_combinations * number_of_decks).each do |card_combination|
-        @cards << Card.new(card_combination[0], card_combination[1])
+      if options[:cards] || options[:discards] || options[:drawn_cards]
+        restore_deck_from_options
+      else
+        (Card.card_combinations * number_of_decks).each do |card_combination|
+          @cards << Card.new(card_combination[0], card_combination[1])
+        end
       end
     end
 
@@ -61,6 +66,34 @@ module PlayingCards
         @discards = []
         self.shuffle! if shuffle_cards
         @cards
+      end
+    end
+
+    private
+
+    def restore_deck_from_options
+      restore_cards = options.delete(:cards) || []
+      restore_discards = options.delete(:discards) || []
+      restore_drawn_cards = options.delete(:drawn_cards) || []
+      restore_deck = restore_cards + restore_discards + restore_drawn_cards
+      sorted_restore_deck = restore_deck.sort{|a,b| a <=> b}
+      unless sorted_restore_deck == (Card.card_combinations * number_of_decks).sort{|a,b| a <=> b}
+        raise InvalidDeckStateError
+      end
+      unless restore_cards.empty?
+        restore_cards.each do |card_combination|
+          @cards << Card.new(card_combination[0], card_combination[1])
+        end
+      end
+      unless restore_discards.empty?
+        restore_discards.each do |card_combination|
+          @discards << Card.new(card_combination[0], card_combination[1])
+        end
+      end
+      unless restore_drawn_cards.empty?
+        restore_drawn_cards.each do |card_combination|
+          @drawn_cards << Card.new(card_combination[0], card_combination[1])
+        end
       end
     end
 
