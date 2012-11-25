@@ -1,6 +1,7 @@
 module PlayingCards
   class Deck
     class NotEnoughCardsError < StandardError; end
+    class NotDrawnCardError < StandardError; end
 
     attr_reader :cards, :discards, :drawn_cards, :options
 
@@ -8,7 +9,7 @@ module PlayingCards
       @options = options
       @cards = []
       @discards = []
-      @drawn = []
+      @drawn_cards = []
       (Card.card_combinations * number_of_decks).each do |card_combination|
         @cards << Card.new(card_combination[0], card_combination[1])
       end
@@ -41,12 +42,17 @@ module PlayingCards
     def draw(num = 1)
       raise NotEnoughCardsError if num > cards_remaining
       draws = cards.shift(num)
-      @drawn += draws
+      @drawn_cards += draws
       draws
     end
 
     def discard(card)
-      @discards << card
+      card_pos = drawn_cards.index(card)
+      if card_pos && drawn_card = drawn_cards.delete_at(card_pos)
+        @discards << card
+      else
+        raise NotDrawnCardError
+      end
     end
 
     def reuse_discards(shuffle_cards = true)

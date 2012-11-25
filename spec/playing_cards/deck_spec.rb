@@ -17,6 +17,25 @@ describe PlayingCards::Deck do
     end
   end
 
+  context "number_of_decks" do
+    it "should return 1 by default" do
+      deck.number_of_decks.should == 1
+      deck.options[:num_decks].should == nil
+    end
+
+    it "should return the number passed in" do
+      one_deck = PlayingCards::Deck.new(:num_decks => 1)
+      one_deck.number_of_decks.should == 1
+      one_deck.options[:num_decks].should == 1
+      two_deck = PlayingCards::Deck.new(:num_decks => 2)
+      two_deck.number_of_decks.should == 2
+      two_deck.options[:num_decks].should == 2
+      three_deck = PlayingCards::Deck.new(:num_decks => 3)
+      three_deck.number_of_decks.should == 3
+      three_deck.options[:num_decks].should == 3
+    end
+  end
+
   context "cards_remaining" do
     it "should return the number of cards left in the deck" do
       deck.cards_remaining.should == 52
@@ -85,6 +104,15 @@ describe PlayingCards::Deck do
     it "should not raise an error when there are enough cards" do
       expect { deck.draw(52) }.to_not raise_error
     end
+
+    it "should increment the drawn cards array" do
+      draw_1 = deck.draw
+      deck.drawn_cards.size.should == 1
+      deck.drawn_cards.should == draw_1
+      draw_2 = deck.draw(2)
+      deck.drawn_cards.size.should == 3
+      deck.drawn_cards.should == [draw_1, draw_2].flatten
+    end
   end
 
   context "discard" do
@@ -98,6 +126,32 @@ describe PlayingCards::Deck do
       deck.discard(second_card)
       deck.discards.size.should == 2
       deck.discards.should == [card, second_card]
+    end
+
+    it "should only allow cards to be discarded that have been drawn" do
+      card = PlayingCards::Card.new(2, 'spade')
+      expect { deck.discard(card) }.to raise_error PlayingCards::Deck::NotDrawnCardError
+    end
+
+    it "should only allow cards to be discarded that have been drawn" do
+      card = deck.draw.first
+      expect { deck.discard(card) }.to_not raise_error
+    end
+
+    it "should only allow cards to be discarded that have been drawn once" do
+      card = deck.draw.first
+      expect { deck.discard(card) }.to_not raise_error
+      expect { deck.discard(card) }.to raise_error PlayingCards::Deck::NotDrawnCardError
+    end
+
+    it "should allow the same card to be discarded if there are multiple decks" do
+      multi_deck = PlayingCards::Deck.new(:num_decks => 2)
+      draw_1 = multi_deck.draw
+      draw_2 = multi_deck.draw(52)
+      draw_1.first.should == draw_2.last
+      expect { multi_deck.discard(draw_1.first) }.to_not raise_error
+      expect { multi_deck.discard(draw_2.last) }.to_not raise_error
+      expect { multi_deck.discard(draw_1.first) }.to raise_error PlayingCards::Deck::NotDrawnCardError
     end
   end
 
