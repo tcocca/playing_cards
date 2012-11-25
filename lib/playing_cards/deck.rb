@@ -79,32 +79,26 @@ module PlayingCards
     private
 
     def restore_deck_from_options
-      restore_cards = options.delete(:cards) || []
-      restore_discards = options.delete(:discards) || []
-      restore_drawn_cards = options.delete(:drawn_cards) || []
-      if restored_deck_valid?(restore_cards, restore_discards, restore_drawn_cards)
-        unless restore_cards.empty?
-          restore_cards.each do |card_combination|
-            @cards << Card.new(card_combination[0], card_combination[1])
-          end
+      options[:cards] ||= []
+      options[:discards] ||= []
+      options[:drawn_cards] ||= []
+      if restored_deck_valid?
+        options[:cards].each do |card_combination|
+          @cards << Card.new(card_combination[0], card_combination[1])
         end
-        unless restore_discards.empty?
-          restore_discards.each do |card_combination|
-            @discards << Card.new(card_combination[0], card_combination[1])
-          end
+        options[:discards].each do |card_combination|
+          @discards << Card.new(card_combination[0], card_combination[1])
         end
-        unless restore_drawn_cards.empty?
-          restore_drawn_cards.each do |card_combination|
-            @drawn_cards << Card.new(card_combination[0], card_combination[1])
-          end
+        options[:drawn_cards].each do |card_combination|
+          @drawn_cards << Card.new(card_combination[0], card_combination[1])
         end
       else
         raise InvalidDeckStateError
       end
     end
 
-    def restored_deck_valid?(restore_cards, restore_discards, restore_drawn_cards)
-      restore_deck = restore_cards + restore_discards + restore_drawn_cards
+    def restored_deck_valid?
+      restore_deck = options[:cards] + options[:discards] + options[:drawn_cards]
       sorted_restore_deck = restore_deck.sort{|a,b| a <=> b}
       sorted_restore_deck == (Card.card_combinations * number_of_decks).sort{|a,b| a <=> b}
     end
