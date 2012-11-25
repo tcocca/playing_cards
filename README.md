@@ -4,6 +4,8 @@ A ruby library for working with playing cards.
 This is meant to be a generic library that will provide the base functionality to build games on top of.
 
 [![Build Status](https://secure.travis-ci.org/tcocca/playing_cards.png?branch=master)](https://travis-ci.org/tcocca/playing_cards)
+[![Dependency Status](https://gemnasium.com/tcocca/playing_cards.png)](https://gemnasium.com/tcocca/playing_cards)
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/tcocca/playing_cards)
 
 ## Installation
 
